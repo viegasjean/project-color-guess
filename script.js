@@ -1,14 +1,8 @@
 const rgbColor = document.getElementById('rgb-color');
-const main = document.querySelector('main');
+const colorContainer = document.getElementById('color-container');
+const answer = document.getElementById('answer');
 
-const answer = document.createElement('p');
-answer.id = 'answer';
-answer.innerText = 'Escolha uma cor';
-main.appendChild(answer);
-
-const btReset = document.querySelector('#reset-game');
-btReset.addEventListener('click', () => window.location.reload());
-
+// Função para gerar cor aleatoria
 function gerarCor() {
   const r = Math.round(Math.random() * 255);
   const g = Math.round(Math.random() * 255);
@@ -17,27 +11,49 @@ function gerarCor() {
   return `(${r}, ${g}, ${b})`;
 }
 
-rgbColor.innerText = gerarCor();
-const sortedColor = `rgb${rgbColor.innerText}`;
+let sortedColor = `rgb${rgbColor.innerText}`; // Cor sorteada inicialmente
 
-let selectedColor = '';
+let selectedColor = ''; // Inicialmente nenhuma cor é selecionada
 
-function aaa(e) {
+let score = localStorage.getItem('score'); // Pega o score do localStorage
+
+document.getElementById('score').innerText = '0'; // Score inicial é 0
+
+// Função para marcar a pontuação
+function pontua(e) {
   selectedColor = e.target.style.backgroundColor;
   if (selectedColor === sortedColor) {
     answer.innerText = 'Acertou!';
+    score += 3;
+    localStorage.setItem('score', `${score}`);
   } else {
     answer.innerText = 'Errou! Tente novamente!';
   }
+  document.getElementById('score').innerText = `${score}`;
 }
 
-for (let i = 0; i < 6; i += 1) {
-  const ball = document.createElement('span');
-  ball.className = 'ball';
-  ball.style.backgroundColor = `rgb${gerarCor()}`;
-  ball.addEventListener('click', aaa);
-  if (i === Math.round(Math.random() * 6)) {
-    ball.style.backgroundColor = sortedColor;
+// Função para iniciar um novo jogo
+function novoJogo(n) {
+  colorContainer.innerHTML = '';
+  rgbColor.innerText = gerarCor();
+  sortedColor = `rgb${rgbColor.innerText}`;
+  answer.innerText = 'Escolha uma cor';
+  for (let i = 0; i < n; i += 1) {
+    const ball = document.createElement('span');
+    ball.className = 'ball';
+    ball.style.backgroundColor = `rgb${gerarCor()}`;
+    ball.addEventListener('click', pontua);
+    if (i === Math.round(Math.random() * 5)) {
+      ball.style.backgroundColor = sortedColor;
+    }
+    colorContainer.appendChild(ball);
   }
-  main.appendChild(ball);
 }
+
+novoJogo(6); // Cria um novo jogo inicial
+
+// Cria um novo jogo ao clicar no botão reset
+const btReset = document.querySelector('#reset-game');
+btReset.addEventListener('click', () => {
+  novoJogo(6);
+});
