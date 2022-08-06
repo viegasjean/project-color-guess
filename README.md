@@ -18,4 +18,4 @@
 
 ## Captura de tela
 
-![Alt Text](./guess-the-color.gif)
+![Gif demonstrado o resultado do projeto](guess-the-color.gif)
